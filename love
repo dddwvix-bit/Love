@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Для моей любимой Жаным ❤️</title>
+    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@700&family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --pink: #ff85a1;
+            --dark-pink: #ff477e;
+            --soft-bg: #fff0f3;
+        }
+
+        body {
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--soft-bg);
+            font-family: 'Montserrat', sans-serif;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Облака на фоне */
+        .cloud {
+            position: absolute;
+            background: white;
+            border-radius: 50px;
+            opacity: 0.6;
+            filter: blur(20px);
+            z-index: 1;
+            animation: floatClouds 25s linear infinite;
+        }
+
+        @keyframes floatClouds {
+            from { transform: translateX(-250px); }
+            to { transform: translateX(110vw); }
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(10px);
+            border: 2px solid white;
+            padding: 40px;
+            border-radius: 40px;
+            text-align: center;
+            box-shadow: 0 20px 40px rgba(255, 133, 161, 0.2);
+            z-index: 10;
+            width: 85%;
+            max-width: 400px;
+            position: relative;
+            transition: all 0.5s ease;
+        }
+
+        .bear-main {
+            font-size: 80px;
+            margin-bottom: 10px;
+            display: inline-block;
+            animation: bounceBear 2s infinite ease-in-out;
+        }
+
+        @keyframes bounceBear {
+            0%, 100% { transform: scale(1) rotate(0); }
+            50% { transform: scale(1.1) rotate(5deg); }
+        }
+
+        h1 {
+            font-family: 'Caveat', cursive;
+            font-size: 2.5rem;
+            color: var(--dark-pink);
+            margin-bottom: 30px;
+        }
+
+        .btn-box {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100px;
+            position: relative;
+        }
+
+        button {
+            padding: 15px 35px;
+            font-size: 1.2rem;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 600;
+        }
+
+        #noBtn {
+            background: white;
+            color: var(--pink);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            z-index: 100;
+        }
+
+        #yesBtn {
+            background: linear-gradient(45deg, var(--pink), var(--dark-pink));
+            color: white;
+            display: none;
+            opacity: 0;
+            transform: scale(0);
+            box-shadow: 0 10px 25px rgba(255, 71, 126, 0.4);
+        }
+
+        #yesBtn.show {
+            display: block;
+            animation: appear 0.5s forwards cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        @keyframes appear {
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        /* Финальная сцена */
+        #final {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            z-index: 50;
+        }
+
+        .heart-wrap {
+            position: relative;
+            width: 300px;
+            height: 300px;
+        }
+
+        .item {
+            position: absolute;
+            pointer-events: none;
+            transition: all 1.5s cubic-bezier(0.19, 1, 0.22, 1);
+        }
+
+        .love-msg {
+            font-family: 'Caveat', cursive;
+            font-size: 3.5rem;
+            color: var(--dark-pink);
+            text-align: center;
+            opacity: 0;
+            margin-top: 20px;
+            filter: drop-shadow(0 0 5px white);
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.08); }
+        }
+    </style>
+</head>
+<body>
+
+    <audio id="loveMusic" loop>
+        <source src="https://www.chosic.com/wp-content/uploads/2021/04/And-So-It-Begins-Inspired-By-Crush-Piano-Melody.mp3" type="audio/mpeg">
+    </audio>
+
+    <div class="cloud" style="top: 10%; width: 200px; height: 60px; animation-delay: 0s;"></div>
+    <div class="cloud" style="top: 40%; width: 150px; height: 50px; animation-delay: -5s;"></div>
+    <div class="cloud" style="top: 70%; width: 250px; height: 80px; animation-delay: -10s;"></div>
+
+    <div class="glass-card" id="card">
+        <div class="bear-main">🧸</div>
+        <h1 id="text">Жаным, ты меня любишь?</h1>
+        <div class="btn-box">
+            <button id="noBtn" onmouseover="moveNo()">Нет</button>
+            <button id="yesBtn" onclick="boom()">ДА! ❤️</button>
+        </div>
+        <div style="font-size: 20px; margin-top: 15px;">🐥🐰✨🌸</div>
+    </div>
+
+    <div id="final">
+        <div class="heart-wrap" id="heartBox"></div>
+        <div class="love-msg" id="msg">
+            Я люблю Тебя, Жаным! ❤️<br>
+            <span style="font-size: 2rem;">Ты мой самый дорогой человек 👑</span>
+        </div>
+    </div>
+
+    <script>
+        let attempts = 0;
+        const music = document.getElementById('loveMusic');
+
+        function moveNo() {
+            const btn = document.getElementById('noBtn');
+            const x = Math.random() * (window.innerWidth - 100);
+            const y = Math.random() * (window.innerHeight - 50);
+            btn.style.position = 'fixed';
+            btn.style.left = x + 'px';
+            btn.style.top = y + 'px';
+            
+            attempts++;
+            if(attempts >= 2) {
+                const yes = document.getElementById('yesBtn');
+                yes.classList.add('show');
+                document.getElementById('text').innerText = "Нажми сюда! 👇✨";
+            }
+        }
+
+        function boom() {
+            // Включаем музыку
+            music.play();
+            
+            document.getElementById('card').style.display = 'none';
+            document.getElementById('final').style.display = 'flex';
+            
+            const box = document.getElementById('heartBox');
+            const icons = ['❤️', '🧸', '🌸', '✨', '🎀', '🐥', '🐰'];
+            const count = 180;
+
+            for (let i = 0; i < count; i++) {
+                const p = document.createElement('div');
+                p.className = 'item';
+                p.innerHTML = icons[Math.floor(Math.random() * icons.length)];
+                p.style.left = '150px';
+                p.style.top = '150px';
+                p.style.opacity = '0';
+                box.appendChild(p);
+
+                const t = (i / count) * 2 * Math.PI;
+                const x = 16 * Math.pow(Math.sin(t), 3) * 11 + 150;
+                const y = -(13 * Math.cos(t) - 5 * Math.cos(2*t) - 2 * Math.cos(3*t) - Math.cos(4*t)) * 11 + 130;
+
+                setTimeout(() => {
+                    p.style.opacity = '1';
+                    p.style.left = x + 'px';
+                    p.style.top = y + 'px';
+                    p.style.fontSize = (Math.random() * 15 + 15) + 'px';
+                }, i * 8);
+            }
+
+            setTimeout(() => {
+                const msg = document.getElementById('msg');
+                msg.style.opacity = '1';
+                msg.style.transition = 'opacity 2s ease';
+                box.style.animation = 'pulse 2s infinite ease-in-out';
+            }, 1800);
+        }
+    </script>
+</body>
+</html>
