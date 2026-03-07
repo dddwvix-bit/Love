@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Для моей Нурикамал ❤️</title>
+    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@700&family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        :root { --primary: #ff2e63; --secondary: #ff8fab; --gold: #ffd700; --bg: #0d0d0d; }
+        body { margin: 0; height: 100vh; display: flex; justify-content: center; align-items: center; background: var(--bg); font-family: 'Montserrat', sans-serif; overflow: hidden; color: white; text-align: center; }
+        
+        canvas { position: fixed; top: 0; left: 0; z-index: -1; }
+
+        /* ВСТУПЛЕНИЕ */
+        #intro { z-index: 100; cursor: pointer; padding: 25px; max-width: 85%; }
+        .typing { font-family: 'Caveat', cursive; font-size: 28px; line-height: 1.4; border-right: 3px solid var(--primary); animation: blink 0.6s infinite; }
+        @keyframes blink { from { border-color: var(--primary) } to { border-color: transparent } }
+
+        /* ИГРА */
+        #game-container { display: none; width: 100%; height: 100%; position: relative; background: radial-gradient(circle at center, #2d0b13 0%, #000 100%); }
+        .falling-heart { 
+            position: absolute; 
+            font-size: 45px; 
+            cursor: pointer; 
+            z-index: 50; 
+            user-select: none; 
+            touch-action: manipulation;
+            filter: drop-shadow(0 0 10px var(--primary));
+            padding: 10px; /* Увеличиваем зону клика */
+        }
+        .click-text { position: fixed; pointer-events: none; font-family: 'Caveat', cursive; font-size: 26px; color: var(--gold); z-index: 100; animation: clickFloat 1s forwards; }
+        @keyframes clickFloat { 0% { opacity: 1; transform: translateY(0); } 100% { opacity: 0; transform: translateY(-120px) scale(1.5); } }
+
+        /* КАРТОЧКА */
+        #card {
+            display: none; background: rgba(255, 255, 255, 0.07); backdrop-filter: blur(20px);
+            padding: 15px; border-radius: 30px; border: 1px solid rgba(255,255,255,0.2);
+            max-width: 360px; width: 92%; box-shadow: 0 0 40px rgba(255,46,99,0.2);
+        }
+
+        /* НАВИГАЦИЯ */
+        .tabs { display: flex; justify-content: space-between; margin-bottom: 15px; background: rgba(0,0,0,0.4); border-radius: 50px; padding: 4px; overflow-x: auto; }
+        .tab { font-size: 9px; padding: 10px 6px; cursor: pointer; border-radius: 40px; transition: 0.3s; flex: 1; white-space: nowrap; text-transform: uppercase; font-weight: 600; }
+        .active-tab { background: var(--primary); color: white; box-shadow: 0 0 10px var(--primary); }
+
+        .page { display: none; min-height: 300px; animation: fadeIn 0.4s ease; padding: 10px; }
+        .photo { width: 100px; height: 100px; border-radius: 50%; border: 3px solid white; object-fit: cover; margin-bottom: 10px; box-shadow: 0 0 20px var(--secondary); }
+        
+        /* СТРАНИЦА ОБЕЩАНИЙ */
+        .promise-item { background: rgba(255,255,255,0.1); margin: 8px 0; padding: 12px; border-radius: 15px; text-align: left; font-size: 13px; border-left: 4px solid var(--primary); }
+        .promise-item b { color: var(--gold); display: block; margin-bottom: 3px; }
+
+        /* ФИНАЛ */
+        #final { display: none; z-index: 500; }
+        .big-heart { font-size: 140px; color: var(--primary); animation: beat 1.2s infinite; text-shadow: 0 0 40px var(--primary); }
+        @keyframes beat { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.15); } }
+
+        button { background: white; color: var(--primary); border: none; padding: 12px; border-radius: 50px; font-weight: bold; cursor: pointer; width: 100%; transition: 0.3s; margin-top: 10px; }
+        button:active { transform: scale(0.95); }
+    </style>
+</head>
+<body>
+
+    <canvas id="stars"></canvas>
+
+    <div id="intro" onclick="startExperience()">
+        <div id="type-text" class="typing"></div>
+        <p style="font-size: 12px; opacity: 0.5; margin-top: 30px;">НАЖМИ НА ЭКРАН 💖</p>
+    </div>
+
+    <div id="game-container">
+        <div style="margin-top: 50px;">
+            <span style="font-size: 14px; letter-spacing: 2px;">СОБЕРИ МОЮ ЛЮБОВЬ</span><br>
+            <b id="count" style="font-size: 50px; color: var(--gold);">0</b> <span style="font-size: 20px;">/ 12</span>
+        </div>
+    </div>
+
+    <div id="card">
+        <div class="tabs">
+            <div class="tab active-tab" onclick="showPage(1, this)">Мы</div>
+            <div class="tab" onclick="showPage(2, this)">Обещаю</div>
+            <div class="tab" onclick="showPage(3, this)">8 Марта</div>
+            <div class="tab" onclick="showPage(4, this)">Причины</div>
+        </div>
+
+        <div id="page1" class="page" style="display: block;">
+            <img class="photo" src="https://i.imgur.com/4AiXzf8.jpeg">
+            <h2 style="font-family: 'Caveat'; font-size: 32px; margin: 0;">Нурикамал ❤️</h2>
+            <div id="timer" style="font-size: 1.1rem; color: var(--secondary); margin: 10px 0; font-weight: bold;"></div>
+            <p style="font-size: 13px; opacity: 0.9;">Ты — лучшее, что случилось со мной с 14 февраля. Скучаю по тебе каждую минуту!</p>
+        </div>
+
+        <div id="page2" class="page">
+            <h3 style="color: var(--gold); margin-top: 0;">Мои клятвы тебе ✨</h3>
+            <div class="promise-item"><b>💎 Защита</b>Обещаю оберегать твой покой и всегда быть на твоей стороне.</div>
+            <div class="promise-item"><b>🧸 Забота</b>Обещаю согревать тебя, когда холодно, и радовать просто так.</div>
+            <div class="promise-item"><b>💍 Верность</b>Моё сердце принадлежит только тебе, сегодня и навсегда.</div>
+            <div class="promise-item"><b>🌟 Честность</b>Обещаю быть с тобой искренним и строить наше общее будущее.</div>
+        </div>
+
+        <div id="page3" class="page">
+            <div style="background: white; color: #d63384; padding: 15px; border-radius: 20px; font-size: 14px;">
+                <h3 style="margin: 0;">С 8 Марта, Родная! 🌷</h3><br>
+                Пусть эта весна расцветает в твоей душе. Ты заслуживаешь всего самого прекрасного в этом мире. Люблю тебя бесконечно!
+            </div>
+            <button onclick="finalReveal()" style="background: var(--primary); color: white; margin-top: 20px;">ПОСМОТРЕТЬ ФИНАЛ ❤️</button>
+        </div>
+
+        <div id="page4" class="page">
+            <h3 style="color: var(--gold);">Ты самая...</h3>
+            <div id="reason-text" style="font-family: 'Caveat'; font-size: 28px; min-height: 100px; display: flex; align-items: center; justify-content: center;">???</div>
+            <button onclick="newReason()" style="background: white; color: var(--primary);">Узнать почему ✨</button>
+        </div>
+    </div>
+
+    <div id="final">
+        <div class="big-heart">❤️</div>
+        <h1 style="font-family: 'Caveat'; font-size: 55px; margin: 0;">ЛЮБЛЮ ТЕБЯ!</h1>
+        <p style="font-size: 18px; opacity: 0.8;">Навсегда. Твой. ❤️</p>
+    </div>
+
+    <script>
+        const introTxt = "Нурикамал, я подготовил для тебя нечто масштабное... Пройди игру, чтобы открыть подарок!";
+        let textI = 0;
+        function type() { if(textI < introTxt.length) { document.getElementById('type-text').innerHTML += introTxt[textI]; textI++; setTimeout(type, 50); } }
+        window.onload = type;
+
+        // Звезды
+        const canvas = document.getElementById('stars');
+        const ctx = canvas.getContext('2d');
+        function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+        window.onresize = resize; resize();
+        let stars = [];
+        for(let i=0; i<80; i++) stars.push({x:Math.random()*canvas.width, y:Math.random()*canvas.height, r:Math.random()*1.5});
+        function animate() {
+            ctx.clearRect(0,0,canvas.width, canvas.height);
+            ctx.fillStyle = "white";
+            stars.forEach(s => { ctx.beginPath(); ctx.arc(s.x, s.y, s.r, 0, Math.PI*2); ctx.fill(); s.y += 0.3; if(s.y > canvas.height) s.y = 0; });
+            requestAnimationFrame(animate);
+        }
+        animate();
+
+        // Игра
+        let score = 0;
+        const comps = ["Милашка!", "Любимая!", "Красотка!", "Моя!", "Солнышко!", "Лучшая!", "Единственная!"];
+        
+        function startExperience() {
+            document.getElementById('intro').style.display = 'none';
+            document.getElementById('game-container').style.display = 'block';
+            spawnHeart();
+        }
+
+        function spawnHeart() {
+            if(score >= 12) return;
+            const h = document.createElement('div');
+            h.className = 'falling-heart';
+            h.innerHTML = '❤️';
+            h.style.left = Math.random()*80 + 10 + '%';
+            h.style.top = '-80px';
+            
+            // Обработчик и для мышки, и для тача
+            const handleGrab = (e) => {
+                e.preventDefault();
+                score++;
+                document.getElementById('count').innerText = score;
+                const pos = e.type.includes('touch') ? e.touches[0] : e;
+                showClickText(pos.clientX, pos.clientY);
+                h.remove();
+                if(score >= 12) setTimeout(showCard, 500);
+                else spawnHeart();
+            };
+
+            h.addEventListener('mousedown', handleGrab);
+            h.addEventListener('touchstart', handleGrab);
+
+            document.getElementById('game-container').appendChild(h);
+            h.animate([{top: '-80px'}, {top: '105vh'}], {duration: 2500, easing: 'linear'}).onfinish = () => {
+                if(h.parentNode) { h.remove(); spawnHeart(); }
+            };
+        }
+
+        function showClickText(x, y) {
+            const t = document.createElement('div');
+            t.className = 'click-text';
+            t.innerText = comps[Math.floor(Math.random()*comps.length)];
+            t.style.left = x - 40 + 'px'; t.style.top = y + 'px';
+            document.body.appendChild(t);
+            setTimeout(() => t.remove(), 1000);
+        }
+
+        function showCard() {
+            document.getElementById('game-container').style.display = 'none';
+            document.getElementById('card').style.display = 'block';
+            setInterval(updateTimer, 1000);
+        }
+
+        function updateTimer() {
+            const diff = new Date() - new Date("2026-02-14T00:00:00");
+            const d = Math.floor(diff/86400000), h = Math.floor(diff/3600000)%24, m = Math.floor(diff/60000)%60, s = Math.floor(diff/1000)%60;
+            document.getElementById('timer').innerText = `${d}д ${h}ч ${m}м ${s}с`;
+        }
+
+        function showPage(n, el) {
+            document.querySelectorAll('.page').forEach(p => p.style.display = 'none');
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active-tab'));
+            document.getElementById('page'+n).style.display = 'block';
+            el.classList.add('active-tab');
+        }
+
+        const reasons = ["Твои глаза ✨", "Твой смех ❤️", "Твоя доброта 🌸", "Твоя поддержка 💎", "Твоя красота 🌟", "Твоя душа 🕊️"];
+        function newReason() { document.getElementById('reason-text').innerText = reasons[Math.floor(Math.random()*reasons.length)]; }
+
+        function finalReveal() {
+            document.getElementById('card').style.display = 'none';
+            document.getElementById('final').style.display = 'block';
+            for(let j=0; j<100; j++) {
+                const p = document.createElement('div');
+                p.style.position = 'fixed'; p.style.left = '50%'; p.style.top = '50%';
+                p.innerHTML = '❤️'; p.style.fontSize = '25px';
+                document.body.appendChild(p);
+                const x = (Math.random()-0.5)*window.innerWidth*1.5;
+                const y = (Math.random()-0.5)*window.innerHeight*1.5;
+                p.animate([{transform: 'translate(0,0) scale(1)', opacity: 1}, {transform: `translate(${x}px, ${y}px) scale(0)`, opacity: 0}], 2500);
+                setTimeout(() => p.remove(), 2500);
+            }
+        }
+    </script>
+</body>
+</html>
